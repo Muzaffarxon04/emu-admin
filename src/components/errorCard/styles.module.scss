@@ -1,0 +1,25 @@
+.container {
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 300px;
+    gap: 20px;
+    background: #fff;
+}
+
+.icon {
+    font-size: 30px;
+    color: #46BB0C;
+}
+
+.button {
+    background: #ECFFD8 !important;
+    color: #46BB0C !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    padding: 8px 24px !important;
+    box-sizing: border-box !important;
+}

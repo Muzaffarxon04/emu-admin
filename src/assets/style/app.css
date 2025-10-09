@@ -1,0 +1,144 @@
+html {
+  font-family: "Lato" !important;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Lato" !important;
+  background: var(--body);
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #ffffff;
+  border: 1px solid #ececec;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #ececec;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #ececec;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-button:start:decrement,
+::-webkit-scrollbar-button:end:increment {
+  display: block;
+  height: 10px;
+}
+
+::-webkit-scrollbar-button:vertical:increment {
+  background-color: #fff;
+}
+
+::-webkit-scrollbar-track-piece {
+  background-color: #ececec;
+  -webkit-border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:vertical {
+  height: 50px;
+  background-color: #ececec;
+  -webkit-border-radius: 3px;
+  cursor: pointer !important;
+}
+
+::-webkit-scrollbar-thumb:horizontal {
+  height: 50px;
+  background-color: #ccc;
+  -webkit-border-radius: 3px;
+  cursor: pointer !important;
+}
+
+.datepicker {
+  background: #fff;
+  width: 100%;
+  color: #000;
+  z-index: 999999999 !important;
+}
+
+.datepicker .rdp-caption_label {
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.datepicker .rdp-head_cell {
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: none;
+}
+
+.datepicker .rdp-table {
+  border-collapse: separate;
+  border-spacing: 10px;
+}
+
+.datepicker .rdp-tbody {
+  border: 1px solid #00000010;
+  border-radius: 12px;
+}
+
+.datepicker .rdp-cell {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #00000010;
+  border-radius: 12px;
+}
+
+.datepicker .rdp-day {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid #00000010;
+}
+
+.datepicker .rdp-day:hover:not([aria-disabled="true"]) {
+  border-color: #fff;
+  background-color: #fff;
+  color: #000;
+}
+
+.datepicker .rdp-day_selected:focus:not([aria-disabled="true"]) {
+  border: 1px solid #fff;
+}
+
+.datepicker .rdp-button:hover:not([aria-disabled="true"]) {
+  background-color: #fff;
+}
+
+.datepicker .rdp-button:focus,
+.rdp-button:active {
+  border: 1px solid #46bb0c;
+  background-color: #ecffd8;
+}
+
+.datepicker .rdp-day_selected:not([aria-disabled="true"]),
+.rdp-day_selected:focus:not([aria-disabled="true"]),
+.rdp-day_selected:active:not([aria-disabled="true"]),
+.rdp-day_selected:hover:not([aria-disabled="true"]) {
+  background-color: #ecffd8;
+  color: #000;
+}
+
+.datepicker .rdp-day_selected.rdp-button:hover {
+  background-color: #ecffd8;
+  border-color: #46bb0c;
+  color: #000;
+}

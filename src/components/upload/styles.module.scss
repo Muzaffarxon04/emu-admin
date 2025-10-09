@@ -1,0 +1,71 @@
+.root {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 100%;
+  min-height: 110px;
+  margin-top: 15px;
+  position: relative;
+}
+
+.uploadContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  .fileInput {
+    .uploadButton {
+      cursor: pointer;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      flex-direction: column;
+      background: transparent;
+      width: 110px;
+      height: 110px;
+    }
+  }
+}
+
+.imageContainer {
+  position: relative;
+
+  &:hover {
+    .imagesShow {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: all 3s ease;
+
+      .deleteIcon {
+        color: #ffffff;
+        font-size: 18px;
+      }
+    }
+  }
+
+  .images {
+    border-radius: 12px;
+    width: 110px;
+    height: 110px;
+    z-index: 99999;
+    cursor: pointer;
+  }
+
+  .imagesShow {
+    display: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.2);
+    width: 30px;
+    height: 30px;
+    transition: all 3s ease;
+  }
+
+  .btnDelete {
+    background-color: transparent !important;
+  }
+}

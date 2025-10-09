@@ -1,0 +1,55 @@
+.select {
+  font-size: 14px;
+  margin-top: 13px;
+
+  .placeholder {
+    color: #999;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px;
+  }
+}
+
+.disabled{
+  margin-top: 0px;
+}
+
+.customOption {
+  width: calc(100% - 10px);
+  margin-left: 4px;
+  margin-right: 4px;
+  padding: 2px 16px;
+  height: 36px;
+  box-sizing: border-box;
+  border-radius: 4px;
+  overflow: hidden;
+
+  &:hover {
+    background: #f0f0ff;
+
+    .title {
+      color: #4265b0;
+    }
+  }
+
+  .optionTitle {
+    width: 100%;
+    cursor: pointer;
+  }
+
+  .title {
+    padding: 8px 0px;
+    color: #6d6e71;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    height: 32px;
+    width: 100%;
+    box-sizing: border-box;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+  }
+}
