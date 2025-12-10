@@ -8,7 +8,7 @@ import { toastError, toastSuccess } from "components/toast/popUp";
 import dayjs from "dayjs";
 import { formatPhoneNumber } from "hooks/formatPhone";
 import { useEffect, useState } from "react";
-import { AiOutlineDownload, AiOutlineEye } from "react-icons/ai";
+import { AiOutlineDownload, AiOutlineEye, AiOutlineBarChart } from "react-icons/ai";
 import { LuPencilLine } from "react-icons/lu";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useMutation, useQuery } from "react-query";
@@ -16,6 +16,7 @@ import eventService from "server/events";
 import { EventsResponse } from "types/events.types";
 import { AddEvents } from "./add";
 import { ShowEvents } from "./show";
+import { ScanStatistics } from "./scanStatistics";
 import { is } from "date-fns/locale";
 
 const MyTable = () => {
@@ -23,6 +24,7 @@ const MyTable = () => {
   const [add, setAdd] = useState<any>(false);
   const [show, setShow] = useState<any>(false);
   const [deleteId, setDeleteID] = useState<any>(false);
+  const [scanStatistics, setScanStatistics] = useState<any>(false);
   const [page, setPage] = useState<number>(1);
   const [file, setFile] = useState();
   const [byId, setByID] = useState<any>();
@@ -174,6 +176,19 @@ const MyTable = () => {
             _hover={{
               bg: "transparent",
             }}
+            onClick={() => setScanStatistics(data)}
+            title="Скан статистика"
+          >
+            <AiOutlineBarChart size={18} />
+          </Button>
+          <Button
+            bg="transparent"
+            p="0"
+            minW={35}
+            h={35}
+            _hover={{
+              bg: "transparent",
+            }}
             onClick={() => setAdd(data)}
           >
             <LuPencilLine size={18} />
@@ -253,6 +268,9 @@ const MyTable = () => {
         />
         {add && <AddEvents refetch={refetch} open={add} close={() => setAdd(false)} />}
         {show && <ShowEvents open={show} close={() => setShow(false)} />}
+        {scanStatistics && (
+          <ScanStatistics open={scanStatistics} close={() => setScanStatistics(false)} />
+        )}
         <ExportByID id={byId} setByID={setByID} />
       </>
     </GlobalContainer>

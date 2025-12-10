@@ -21,6 +21,9 @@ export interface EventsResponse {
   count_applications: number,
   phone: string,
   image_urls: [],
+  qr_code?: string,
+  latitude?: number,
+  longitude?: number,
   cities: {
     name_ru: string,
     id: number

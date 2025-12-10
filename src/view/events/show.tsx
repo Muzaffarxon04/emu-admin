@@ -9,6 +9,8 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
+  VStack,
+  Button,
 } from "@chakra-ui/react";
 import { Btn } from "components/button";
 import { CustomInput } from "components/input";
@@ -18,7 +20,7 @@ import { useForm } from "react-hook-form";
 import { RangeDatePicker } from "components/rangeDatePicker";
 import { RangeTimePicker } from "components/rangeTimePicker";
 import { ReactSelect } from "components/reactSelect";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Upload from "components/upload/upload";
 import { CustomTextArea } from "components/textArea";
 import { useQuery } from "react-query";
@@ -26,8 +28,11 @@ import eventService from "server/events";
 import { Loading } from "components/loading";
 import { EventsResponse } from "types/events.types";
 import { LangType } from "types/global.types";
-import { toastError } from "components/toast/popUp";
+import { toastError, toastSuccess } from "components/toast/popUp";
 import Phone from "components/phone/phone";
+import { QRCodeSVG } from "qrcode.react";
+import { saveAs } from "file-saver";
+import { AiOutlineDownload } from "react-icons/ai";
 
 type Props = {
   open: any;
@@ -43,6 +48,8 @@ export function ShowEvents({ open, close }: Props) {
   const [date, setDate] = useState<any>(null);
   const [time, setTime] = useState<any>(null);
   const [images, setImages] = useState<any>(null);
+  const [qrCode, setQrCode] = useState<string | null>(null);
+  const qrCodeRef = useRef<HTMLDivElement>(null);
   const {
     control,
     setValue,
@@ -81,10 +88,50 @@ export function ShowEvents({ open, close }: Props) {
         setValue("scores", res.scores);
         setImages(res?.image_urls);
       });
+      if (res?.qr_code) {
+        setQrCode(res.qr_code);
+      }
     },
     onError: (err: any) => toastError(err?.data?.detail?.detail),
     enabled: Boolean(open?.id),
   });
+
+  const downloadQRCode = () => {
+    if (!qrCode) return;
+    
+    try {
+      // SVG'ni PNG'ga aylantirish
+      const svgElement = qrCodeRef.current?.querySelector('svg');
+      if (!svgElement) {
+        toastError("QR код не найден");
+        return;
+      }
+
+      const svgData = new XMLSerializer().serializeToString(svgElement);
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+
+      img.onload = () => {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        if (ctx) {
+          ctx.drawImage(img, 0, 0);
+          canvas.toBlob((blob) => {
+            if (blob) {
+              saveAs(blob, `qr-code-event-${open?.id || 'event'}.png`);
+              toastSuccess("QR код успешно загружен!");
+            }
+          });
+        }
+      };
+
+      img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+    } catch (error) {
+      console.error("Error downloading QR code:", error);
+      toastError("Ошибка при загрузке QR кода");
+    }
+  };
 
   return (
     <Modal scrollBehavior="inside" isOpen={open} onClose={close} isCentered size={"4xl"}>
@@ -190,6 +237,42 @@ export function ShowEvents({ open, close }: Props) {
               ))}
 
               <Upload addDisable deleteDisabled image={images} setImage={setImages} />
+
+              {qrCode && (
+                <Box mt="25px" p="20px" border="1px solid #D9D9D9" borderRadius="8px">
+                  <Text fontSize="16px" fontWeight="600" mb="15px">
+                    QR код события
+                  </Text>
+                  <VStack spacing="15px" align="flex-start">
+                    <Box
+                      ref={qrCodeRef}
+                      p="15px"
+                      bg="white"
+                      borderRadius="8px"
+                      border="1px solid #E2E8F0"
+                      display="flex"
+                      justifyContent="center"
+                      alignItems="center"
+                    >
+                      <QRCodeSVG
+                        value={qrCode}
+                        size={200}
+                        level="H"
+                        includeMargin={true}
+                      />
+                    </Box>
+                    <Button
+                      onClick={downloadQRCode}
+                      colorScheme="green"
+                      size="md"
+                      variant="outline"
+                      leftIcon={<AiOutlineDownload />}
+                    >
+                      Скачать QR код
+                    </Button>
+                  </VStack>
+                </Box>
+              )}
             </Box>
           )}
         </ModalBody>

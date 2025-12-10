@@ -23,6 +23,7 @@ import { ReactSelect } from "components/reactSelect";
 import { CustomTextArea } from "components/textArea";
 import { toastError, toastSuccess } from "components/toast/popUp";
 import Upload from "components/upload/upload";
+import { MapPicker } from "components/mapPicker";
 import dayjs from "dayjs";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -51,6 +52,10 @@ export function AddEvents({ open, close, refetch }: Props) {
   const [time, setTime] = useState<any>();
   const [images, setImages] = useState<object[]>([]);
   const [required, setRequired] = useState(false);
+  const [latitude, setLatitude] = useState<number | undefined>(undefined);
+  const [longitude, setLongitude] = useState<number | undefined>(undefined);
+  const [locationName, setLocationName] = useState<string | undefined>(undefined);
+  const [isMapOpen, setIsMapOpen] = useState(false);
   const {
     handleSubmit,
     control,
@@ -98,6 +103,10 @@ export function AddEvents({ open, close, refetch }: Props) {
       setIsChecked(res.price ? true : false);
       setImages(res?.image_urls);
       setValue("phone", res.phone);
+      if (res.latitude && res.longitude) {
+        setLatitude(res.latitude);
+        setLongitude(res.longitude);
+      }
     },
     onError: (err: any) => toastError(err?.data?.detail?.detail),
     enabled: Boolean(open?.id),
@@ -156,6 +165,8 @@ export function AddEvents({ open, close, refetch }: Props) {
       price: isChecked ? data.price : 0,
       city: undefined,
       image_urls: images,
+      latitude: latitude,
+      longitude: longitude,
     };
     if (open?.id) edit(params);
     else add(params);
@@ -220,6 +231,49 @@ export function AddEvents({ open, close, refetch }: Props) {
                     />
                   ))}
                 </HStack>
+
+                <Box mt="20px">
+                  <Btn
+                    mode="send"
+                    onClick={() => setIsMapOpen(true)}
+                    type="button"
+                  >
+                    {latitude && longitude ? "Изменить местоположение" : "Выбрать местоположение на карте"}
+                  </Btn>
+                  {latitude && longitude && (
+                    <Box
+                      mt="15px"
+                      p="15px"
+                      bg="#F7FAFC"
+                      border="1px solid #E2E8F0"
+                      borderRadius="8px"
+                    >
+                      {locationName && (
+                        <Box mb="10px">
+                          <Text fontSize="12px" fontWeight="600" color="#718096" mb="4px" textTransform="uppercase">
+                            Адрес
+                          </Text>
+                          <Text fontSize="14px" fontWeight="500" color="#2D3748" lineHeight="1.5">
+                            {locationName}
+                          </Text>
+                        </Box>
+                      )}
+                      <Box pt="10px" borderTop="1px solid #E2E8F0">
+                        <Text fontSize="12px" fontWeight="600" color="#718096" mb="4px" textTransform="uppercase">
+                          Координаты
+                        </Text>
+                        <HStack spacing="15px">
+                          <Text fontSize="13px" color="#4A5568">
+                            <Text as="span" fontWeight="600">Широта:</Text> {latitude.toFixed(6)}
+                          </Text>
+                          <Text fontSize="13px" color="#4A5568">
+                            <Text as="span" fontWeight="600">Долгота:</Text> {longitude.toFixed(6)}
+                          </Text>
+                        </HStack>
+                      </Box>
+                    </Box>
+                  )}
+                </Box>
 
                 <Box mt={"25px"}>
                   <Phone error={errors} name={"phone"} control={control} />
@@ -300,6 +354,9 @@ export function AddEvents({ open, close, refetch }: Props) {
               onClick={() => {
                 close();
                 reset();
+                setLatitude(undefined);
+                setLongitude(undefined);
+                setLocationName(undefined);
               }}
             >
               Отмена
@@ -311,6 +368,17 @@ export function AddEvents({ open, close, refetch }: Props) {
           </ModalFooter>
         </ModalContent>
       </form>
+      <MapPicker
+        isOpen={isMapOpen}
+        onClose={() => setIsMapOpen(false)}
+        onSelect={(lat, lng, name) => {
+          setLatitude(lat);
+          setLongitude(lng);
+          setLocationName(name);
+        }}
+        initialLat={latitude}
+        initialLng={longitude}
+      />
     </Modal>
   );
 }
