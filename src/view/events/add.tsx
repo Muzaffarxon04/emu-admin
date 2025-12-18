@@ -361,7 +361,6 @@ export function AddEvents({ open, close, refetch }: Props) {
             >
               Отмена
             </Btn>
-
             <Btn load={open.id ? editLoad : addLoad} type="submit" mode="send" onClick={checkError}>
               Сохранить
             </Btn>
