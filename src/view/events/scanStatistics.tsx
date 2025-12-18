@@ -14,6 +14,13 @@ import {
   StatLabel,
   StatNumber,
   Button,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  TableContainer,
 } from "@chakra-ui/react";
 import { Btn } from "components/button";
 import { Loading } from "components/loading";
@@ -22,6 +29,8 @@ import { useQuery, useMutation } from "react-query";
 import eventService from "server/events";
 import { AiOutlineBarChart, AiOutlineDownload } from "react-icons/ai";
 import { saveAs } from "file-saver";
+import dayjs from "dayjs";
+import { formatPhoneNumber } from "hooks/formatPhone";
 
 type Props = {
   open: any;
@@ -55,7 +64,7 @@ export function ScanStatistics({ open, close }: Props) {
   });
 
   return (
-    <Modal scrollBehavior="inside" isOpen={open} onClose={close} isCentered size={"2xl"}>
+    <Modal scrollBehavior="inside" isOpen={open} onClose={close} isCentered size={"4xl"}>
       <OverlayOne />
       <ModalContent>
         <ModalHeader p="26px 30px 15px 30px">
@@ -102,10 +111,10 @@ export function ScanStatistics({ open, close }: Props) {
                     <Box flex={1} p="20px" bg="#E6F4FF" borderRadius="8px">
                       <Stat>
                         <StatLabel fontSize="14px" fontWeight="500">
-                          Уникальные сканирования
+                          Уникальные пользователи
                         </StatLabel>
                         <StatNumber fontSize="24px" color="#1890FF">
-                          {data?.data?.unique_scans || 0}
+                          {data?.data?.unique_users || 0}
                         </StatNumber>
                       </Stat>
                     </Box>
@@ -113,51 +122,58 @@ export function ScanStatistics({ open, close }: Props) {
                     <Box flex={1} p="20px" bg="#FFF7E6" borderRadius="8px">
                       <Stat>
                         <StatLabel fontSize="14px" fontWeight="500">
-                          Повторные сканирования
+                          Всего начислено баллов
                         </StatLabel>
                         <StatNumber fontSize="24px" color="#FA8C16">
-                          {(data?.data?.total_scans || 0) - (data?.data?.unique_scans || 0)}
+                          {data?.data?.total_points_awarded || 0}
                         </StatNumber>
                       </Stat>
                     </Box>
                   </HStack>
 
-                  {data?.data?.scans_by_date && data?.data?.scans_by_date?.length > 0 && (
+                  {data?.data?.recent_scans && data?.data?.recent_scans?.length > 0 && (
                     <Box mt="20px">
                       <Text fontSize="18px" fontWeight="600" mb="15px">
-                        Сканирования по датам
+                        Последние сканирования
                       </Text>
-                      <VStack spacing="10px" align="stretch">
-                        {data.data.scans_by_date.map((item: any, index: number) => (
-                          <Box
-                            key={index}
-                            p="15px"
-                            bg="white"
-                            border="1px solid #E2E8F0"
-                            borderRadius="8px"
-                          >
-                            <HStack justify="space-between">
-                              <Text fontSize="14px" fontWeight="500">
-                                {item.date || "N/A"}
-                              </Text>
-                              <Text fontSize="16px" fontWeight="600" color="#46BB0C">
-                                {item.count || 0} сканирований
-                              </Text>
-                            </HStack>
-                          </Box>
-                        ))}
-                      </VStack>
-                    </Box>
-                  )}
-
-                  {data?.data?.last_scan && (
-                    <Box mt="20px" p="15px" bg="#F0F9FF" borderRadius="8px">
-                      <Text fontSize="14px" fontWeight="500" mb="5px">
-                        Последнее сканирование
-                      </Text>
-                      <Text fontSize="16px" fontWeight="600">
-                        {data.data.last_scan}
-                      </Text>
+                      <TableContainer>
+                        <Table variant="simple" size="sm">
+                          <Thead>
+                            <Tr>
+                              <Th>Пользователь</Th>
+                              <Th>Телефон</Th>
+                              <Th>Время сканирования</Th>
+                              <Th isNumeric>Баллы</Th>
+                            </Tr>
+                          </Thead>
+                          <Tbody>
+                            {data.data.recent_scans.map((scan: any) => (
+                              <Tr key={scan.scan_id}>
+                                <Td>
+                                  <Text fontWeight="500">{scan.user_name || "N/A"}</Text>
+                                </Td>
+                                <Td>
+                                  <Text fontSize="13px" color="#718096">
+                                    {scan.user_phone ? formatPhoneNumber(scan.user_phone) : "N/A"}
+                                  </Text>
+                                </Td>
+                                <Td>
+                                  <Text fontSize="13px" color="#718096">
+                                    {scan.scanned_at
+                                      ? dayjs(scan.scanned_at).format("DD.MM.YYYY HH:mm")
+                                      : "N/A"}
+                                  </Text>
+                                </Td>
+                                <Td isNumeric>
+                                  <Text fontWeight="600" color="#46BB0C">
+                                    {scan.points_earned || 0}
+                                  </Text>
+                                </Td>
+                              </Tr>
+                            ))}
+                          </Tbody>
+                        </Table>
+                      </TableContainer>
                     </Box>
                   )}
                 </VStack>
