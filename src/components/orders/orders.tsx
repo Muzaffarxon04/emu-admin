@@ -1,4 +1,4 @@
-import { Button, HStack, Select, Tag } from "@chakra-ui/react";
+import { Button, HStack, Select } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { AiOutlineEye } from "react-icons/ai";
 import { DataTable } from "components/dataTable";

@@ -18,7 +18,7 @@ import { useForm } from "react-hook-form";
 import { useQuery } from "react-query";
 import orderService from "server/order";
 import { Loading } from "components/loading";
-import { OrderResponse } from "types/order.types";
+// import { OrderResponse } from "types/order.types";
 import { LangType } from "types/global.types";
 import Phone from "components/phone/phone";
 import { statusList } from "./status";
