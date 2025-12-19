@@ -106,7 +106,7 @@ export default function EventDetail() {
     
     addPoints({
       user_id: selectedUser.users.id,
-      event_id: eventId,
+      event_id: null,
       points: parseInt(formData.points),
       description: formData.description || "Qo'shimcha faollik uchun",
     });

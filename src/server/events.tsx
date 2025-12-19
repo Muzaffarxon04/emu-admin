@@ -26,10 +26,11 @@ const eventService = {
   },
   calculatePoints: (data?: { user_id: number; event_id: number; points: number; reason: string; operation: "add" | "subtract" }) => 
     request.post("admin/calculate-points", data),
-  addManualPoints: (data?: { user_id: number; event_id: number; points: number; description: string }) => 
+  addManualPoints: (data?: { user_id: number; points: number; event_id?: number|null; description: string }) => 
     request.post("applications/events/manual-points", data),
   getEventParticipants: (eventId?: number) => request.get(`applications/events`, { params: { event_id: eventId } }),
   getPointsHistory: (userId?: number) => request.get(`applications/events/manual-points/history`, { params: { user_id: userId } }),
+  getAllPointsHistory: (params?: any) => request.get(`applications/events/manual-points/history`, { params }),
 };
 
 export default eventService;

@@ -92,7 +92,8 @@ export function ScanStatistics({ open, close }: Props) {
     
     addPoints({
       user_id: selectedUser.user_id,
-      event_id: open?.id,
+      // event_id: open?.id,
+      event_id:null,
       points: parseInt(formData.points),
       description: formData.description || "Qo'shimcha faollik uchun",
     });

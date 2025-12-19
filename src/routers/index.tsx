@@ -41,6 +41,10 @@ const AppRoutes = [
     path: "media",
     component: lazy(() => import("view/media")),
   },
+  {
+    path: "points-history",
+    component: lazy(() => import("view/pointsHistory")),
+  },
 ];
 
 export default AppRoutes;

@@ -8,5 +8,6 @@ export interface MasterResponse {
   cities: {
     name_ru: string;
   };
-  email: string
+  email: string;
+  balance?: number;
 }
