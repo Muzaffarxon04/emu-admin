@@ -5,6 +5,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import AppRoutes from "routers";
 import Auth from "view/auth/login";
 import Events from "view/events";
+import EventDetail from "view/events/detail";
 
 //  git config user.email "abdulloh7860@gmail.com"
 //  git config user.name "Abdulloh0109"
@@ -33,6 +34,7 @@ function App() {
 
         <Route path="" element={login(<AppLayout />)}>
           <Route path="/" element={<Events />} />
+          <Route path="events/:id" element={<EventDetail />} />
           {AppRoutes.map(({ path, component: Component }) => (
             <Route key={path} path={path} element={<Component />} />
           ))}

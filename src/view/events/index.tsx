@@ -8,10 +8,11 @@ import { toastError, toastSuccess } from "components/toast/popUp";
 import dayjs from "dayjs";
 import { formatPhoneNumber } from "hooks/formatPhone";
 import { useEffect, useState } from "react";
-import { AiOutlineDownload, AiOutlineEye, AiOutlineBarChart } from "react-icons/ai";
+import { AiOutlineDownload, AiOutlineEye, AiOutlineBarChart, AiOutlineUser } from "react-icons/ai";
 import { LuPencilLine } from "react-icons/lu";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useMutation, useQuery } from "react-query";
+import { useNavigate } from "react-router-dom";
 import eventService from "server/events";
 import { EventsResponse } from "types/events.types";
 import { AddEvents } from "./add";
@@ -20,6 +21,7 @@ import { ScanStatistics } from "./scanStatistics";
 import { is } from "date-fns/locale";
 
 const MyTable = () => {
+  const navigate = useNavigate();
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [add, setAdd] = useState<any>(false);
   const [show, setShow] = useState<any>(false);
@@ -180,6 +182,19 @@ const MyTable = () => {
             title="Скан статистика"
           >
             <AiOutlineBarChart size={18} />
+          </Button>
+          <Button
+            bg="transparent"
+            p="0"
+            minW={35}
+            h={35}
+            _hover={{
+              bg: "transparent",
+            }}
+            onClick={() => navigate(`/events/${data.id}`)}
+            title="Участники события"
+          >
+            <AiOutlineUser size={18} />
           </Button>
           <Button
             bg="transparent"

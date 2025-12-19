@@ -21,16 +21,21 @@ import {
   Th,
   Td,
   TableContainer,
+  Input,
+  FormControl,
+  FormLabel,
 } from "@chakra-ui/react";
 import { Btn } from "components/button";
 import { Loading } from "components/loading";
 import { toastError, toastSuccess } from "components/toast/popUp";
-import { useQuery, useMutation } from "react-query";
+import { useQuery, useMutation, useQueryClient } from "react-query";
 import eventService from "server/events";
 import { AiOutlineBarChart, AiOutlineDownload } from "react-icons/ai";
 import { saveAs } from "file-saver";
 import dayjs from "dayjs";
 import { formatPhoneNumber } from "hooks/formatPhone";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 
 type Props = {
   open: any;
@@ -42,6 +47,11 @@ const OverlayOne = () => (
 );
 
 export function ScanStatistics({ open, close }: Props) {
+  const queryClient = useQueryClient();
+  const [isAddPointsModalOpen, setIsAddPointsModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const { register, handleSubmit, formState: { errors }, reset } = useForm();
+
   const { isLoading, data } = useQuery<any>(
     ["events_scan_statistics", open?.id],
     () => eventService.getScanStatistics(open?.id),
@@ -62,6 +72,32 @@ export function ScanStatistics({ open, close }: Props) {
       toastError(err?.data?.detail?.detail || "Ошибка при загрузке Excel файла");
     },
   });
+
+  const { mutate: addPoints, isLoading: isAddingPoints } = useMutation({
+    mutationFn: (data: any) => eventService.addManualPoints(data),
+    onSuccess: () => {
+      toastSuccess("Баллы успешно начислены!");
+      setIsAddPointsModalOpen(false);
+      setSelectedUser(null);
+      reset();
+      queryClient.invalidateQueries(["events_scan_statistics", open?.id]);
+    },
+    onError: (err: any) => {
+      toastError(err?.data?.detail?.detail || err?.data?.detail || "Ошибка при начислении баллов");
+    },
+  });
+
+  const handleAddPoints = (formData: any) => {
+    if (!selectedUser) return;
+    
+    addPoints({
+      user_id: selectedUser.user_id,
+      event_id: open?.id,
+      points: parseInt(formData.points),
+      description: formData.description || "Qo'shimcha faollik uchun",
+    });
+  };
+
 
   return (
     <Modal scrollBehavior="inside" isOpen={open} onClose={close} isCentered size={"4xl"}>
@@ -169,6 +205,7 @@ export function ScanStatistics({ open, close }: Props) {
                                     {scan.points_earned || 0}
                                   </Text>
                                 </Td>
+                            
                               </Tr>
                             ))}
                           </Tbody>
@@ -188,15 +225,114 @@ export function ScanStatistics({ open, close }: Props) {
           )}
         </ModalBody>
 
-        <Box p="0 30px">
-          <Divider border="1px solid #D9D9D9" />
-        </Box>
+
         <ModalFooter gap="21px" p="30px">
           <Btn mode="cancel" onClick={() => close()}>
             Закрыть
           </Btn>
         </ModalFooter>
       </ModalContent>
+
+      {/* Add Points Modal */}
+      <Modal
+        isOpen={isAddPointsModalOpen}
+        onClose={() => {
+          setIsAddPointsModalOpen(false);
+          setSelectedUser(null);
+          reset();
+        }}
+        isCentered
+        size="md"
+      >
+        <ModalOverlay bg="blackAlpha.300" backdropFilter="blur(10px) hue-rotate(90deg)" />
+        <ModalContent>
+          <ModalHeader p="26px 30px 15px 30px">
+            <Text fontSize="24px" fontWeight="700">
+              Добавить баллы
+            </Text>
+          </ModalHeader>
+          <form onSubmit={handleSubmit(handleAddPoints)}>
+            <ModalBody p="0px 30px 30px 30px">
+              {selectedUser && (
+                <Box mb="20px" p="15px" bg="#F7FAFC" borderRadius="8px">
+                  <Text fontSize="14px" fontWeight="600" color="#718096" mb="5px">
+                    Пользователь
+                  </Text>
+                  <Text fontSize="16px" fontWeight="600">
+                    {selectedUser.user_name || "N/A"}
+                  </Text>
+                  <Text fontSize="13px" color="#718096" mt="5px">
+                    {selectedUser.user_phone ? formatPhoneNumber(selectedUser.user_phone) : "N/A"}
+                  </Text>
+                </Box>
+              )}
+
+              <VStack spacing="20px" align="stretch">
+                <FormControl isInvalid={!!errors.points}>
+                  <FormLabel fontSize="14px" fontWeight="600">
+                    Количество баллов
+                  </FormLabel>
+                  <Input
+                    {...register("points", {
+                      required: "Введите количество баллов",
+                      pattern: {
+                        value: /^(?!0|-)\d+$/,
+                        message: "Введите положительное число",
+                      },
+                    })}
+                    type="number"
+                    placeholder="Введите количество баллов"
+                    borderColor="#D9D9D9"
+                    h="40px"
+                  />
+                  {errors.points && (
+                    <Text fontSize="12px" color="#ED665E" mt="5px">
+                      {errors.points.message as string}
+                    </Text>
+                  )}
+                </FormControl>
+
+                <FormControl isInvalid={!!errors.description}>
+                  <FormLabel fontSize="14px" fontWeight="600">
+                    Описание
+                  </FormLabel>
+                  <Input
+                    {...register("description", { required: "Введите описание" })}
+                    type="text"
+                    placeholder="Например: Qo'shimcha faollik uchun"
+                    borderColor="#D9D9D9"
+                    h="40px"
+                  />
+                  {errors.description && (
+                    <Text fontSize="12px" color="#ED665E" mt="5px">
+                      {errors.description?.message as string}
+                    </Text>
+                  )}
+                </FormControl>
+              </VStack>
+            </ModalBody>
+            <Box p="0 30px">
+              <Divider border="1px solid #D9D9D9" />
+            </Box>
+            <ModalFooter gap="21px" p="30px">
+              <Btn
+                mode="cancel"
+                onClick={() => {
+                  setIsAddPointsModalOpen(false);
+                  setSelectedUser(null);
+                  reset();
+                }}
+                type="button"
+              >
+                Отмена
+              </Btn>
+              <Btn mode="send" type="submit" load={isAddingPoints}>
+                Добавить
+              </Btn>
+            </ModalFooter>
+          </form>
+        </ModalContent>
+      </Modal>
     </Modal>
   );
 }
